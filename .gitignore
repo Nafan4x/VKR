@@ -1,0 +1,55 @@
+# --- Python ---
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+*.pdb
+*.so
+
+# Виртуальные окружения
+env/
+venv/
+.venv/
+
+.env
+
+# Кэш и временные файлы
+*.log
+*.tmp
+*.temp
+*.bak
+
+# Файлы настроек IDE
+.vscode/
+.idea/
+
+# --- SQLite ---
+*.sqlite
+*.sqlite3
+*.db
+*.db3
+*.sqlite-journal
+*.sqlite3-journal
+
+# Миграции (если используется Django)
+*/migrations/* 
+!*/migrations/__init__.py
+
+# --- Pip ---
+pip-wheel-metadata/
+pip-log.txt
+
+# --- Poetry ---
+.poetry/
+
+# --- PyInstaller ---
+build/
+dist/
+*.spec
+
+# --- Jupyter ---
+.ipynb_checkpoints/
+
+# --- OS ---
+.DS_Store
+Thumbs.db
