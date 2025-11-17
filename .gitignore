@@ -1,55 +1,50 @@
-# --- Python ---
-__pycache__/
-*.py[cod]
-*.pyo
-*.pyd
-*.pdb
-*.so
-
-# Виртуальные окружения
-env/
+# Virtual environment
 venv/
+env/
 .venv/
 
-.env
+# Python cache
+__pycache__/
+*.py[cod]
+*$py.class
 
-# Кэш и временные файлы
+# Database
+*.db
+*.sqlite
+*.db-journal
+
+# Logs
 *.log
-*.tmp
-*.temp
-*.bak
+logs/
 
-# Файлы настроек IDE
+# Environment variables
+.env
+.env.local
+
+# IDE
 .vscode/
 .idea/
+*.swp
+*.swo
 
-# --- SQLite ---
-*.sqlite
-*.sqlite3
-*.db
-*.db3
-*.sqlite-journal
-*.sqlite3-journal
-
-# Миграции (если используется Django)
-*/migrations/* 
-!*/migrations/__init__.py
-
-# --- Pip ---
-pip-wheel-metadata/
-pip-log.txt
-
-# --- Poetry ---
-.poetry/
-
-# --- PyInstaller ---
-build/
-dist/
-*.spec
-
-# --- Jupyter ---
-.ipynb_checkpoints/
-
-# --- OS ---
+# OS
 .DS_Store
 Thumbs.db
+
+# Alembic
+alembic/versions/
+
+# PyCharm
+.idea/
+
+# VS Code
+.vscode/
+
+# Temporary files
+*.tmp
+*.temp
+
+# Distribution / packaging
+dist/
+build/
+*.egg-info/
