@@ -8,6 +8,7 @@ from app.keyboards.callback_data import (
     feedback_page,
     event_page,
     social_page,
+    start_page,
 )
 
 
@@ -33,21 +34,9 @@ class Markup:
             )
 
         return markup.as_markup()
-    # @staticmethod
-    # def open_menu() -> InlineKeyboardMarkup:
-    #     markup = InlineKeyboardBuilder()
-    #     buttons = {
-    #         'Главная': main_page,
-    #         'Как вступить?': join_page,
-    #         'Социальные программы': social_page,
-    #         'Мероприятия': event_page,
-    #         'Как связаться?': contact_page,
-    #         'Обратная связь': feedback_page
-    #     }
 
-    #     for key, value in buttons.items():
-    #         markup.row(
-    #             InlineKeyboardButton(text=key, callback_data=value)
-    #         )
-
-    #     return markup.as_markup()
+    @staticmethod
+    def back_menu() -> InlineKeyboardMarkup:
+        markup = InlineKeyboardBuilder()
+        markup.row(InlineKeyboardButton(text='⬅️ Вернуться назад', callback_data=start_page))
+        return markup.as_markup()

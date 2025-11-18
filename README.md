@@ -31,6 +31,7 @@ pip install -r requirements.txt
 
 4. Проведите миграции через alembic
 ```bash
+alembic revision --autogenerate -m 'initial'
 alembic upgrade head
 ```
 
