@@ -1,6 +1,8 @@
 from sqlalchemy import select, update
 from sqlalchemy.ext.asyncio import AsyncSession
 
+import os
+
 from app.db.models.resources import Resources
 
 
@@ -19,11 +21,12 @@ class ResourcesDAO:
             link = resource.url
             await session.commit()
             return link
-        
-        resources = result.all()
-        await session.commit()
-
-        return resources
+        elif type == 'file':
+            resources = result.scalars().all()
+            await session.commit()
+            if resources:
+                return [(resource.id, resource.name, resource.url) for resource in resources]
+        return None
 
     @staticmethod
     async def update_or_create(
@@ -42,9 +45,33 @@ class ResourcesDAO:
             resource = Resources(type=type, name=name, url=url)
             session.add(resource)
         else:
+            if type == 'file':
+                await session.commit()
+                return False
             resource.url = url
 
         await session.commit()
         await session.refresh(resource)
 
+        return True
+    
+    @staticmethod
+    async def delete_by_id(session: AsyncSession, resource_id: int) -> bool:
+        result = await session.execute(
+            select(Resources).where(Resources.id == resource_id)
+        )
+        resource = result.scalar_one_or_none()
+
+        if not resource:
+            return False 
+
+        if resource.type == 'file' and resource.url:
+            try:
+                if os.path.exists(resource.url):
+                    os.remove(resource.url)
+            except Exception as e:
+                print(f"Ошибка при удалении файла {resource.url}: {e}")
+
+        await session.delete(resource)
+        await session.commit()
         return True

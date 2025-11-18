@@ -1,5 +1,6 @@
 from aiogram import F, Router, types
 from aiogram.filters import CommandStart
+from aiogram.types import InputMediaDocument, FSInputFile
 from aiogram.types import Message
 
 
@@ -16,9 +17,11 @@ from app.keyboards.callback_data import (
     feedback_page,
     join_page,
     social_page,
+    get_file_page,
 )
 
 router = Router()
+start_message_text = '<b>Привет!</b>'
 
 
 @router.message(CommandStart())
@@ -32,7 +35,7 @@ async def start_command(message: Message):
         )
 
     await message.answer(
-        '<b>Привет!</b>',
+        start_message_text,
         parse_mode='HTML',
         reply_markup=Markup.open_menu()
     )
@@ -41,7 +44,7 @@ async def start_command(message: Message):
 @router.callback_query(F.data == start_page)
 async def start_menu(cb: types.CallbackQuery):
     await cb.message.edit_text(
-        '<b>Привет!</b>',
+        start_message_text,
         parse_mode='HTML',
         reply_markup=Markup.open_menu()
     )
@@ -98,8 +101,28 @@ async def join_menu(cb: types.CallbackQuery):
         message_text = await MessageDAO.get_text_message(session, join_page)
     await cb.message.edit_text(
         message_text,
-        reply_markup=Markup.back_menu(),
+        reply_markup=Markup.join_menu(),
         parse_mode='HTML',
+    )
+
+
+@router.callback_query(F.data == get_file_page)
+async def get_file_menu(cb: types.CallbackQuery):
+    sending_message = await cb.message.edit_text(
+        'Отправляю файлы, пожалуйста подождите...',
+        parse_mode='HTML',
+    )
+    async for session in get_db():
+        files = await ResourcesDAO.get_resources(session, 'file')
+        file_urls = [file[2] for file in files]
+    if file_urls:
+        media = [InputMediaDocument(media=FSInputFile(file_url)) for file_url in file_urls]
+        await cb.message.answer_media_group(media)
+    await sending_message.delete()
+    await cb.message.answer(
+        start_message_text,
+        parse_mode='HTML',
+        reply_markup=Markup.open_menu()
     )
 
 

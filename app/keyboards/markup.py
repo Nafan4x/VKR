@@ -9,6 +9,7 @@ from app.keyboards.callback_data import (
     event_page,
     social_page,
     start_page,
+    get_file_page,
 )
 
 
@@ -49,5 +50,12 @@ class Markup:
     def feedback_menu(feedback_link) -> InlineKeyboardMarkup:
         markup = InlineKeyboardBuilder()
         markup.row(InlineKeyboardButton(text='Ссылка на форму', url=feedback_link))
+        markup.row(InlineKeyboardButton(text='⬅️ Вернуться назад', callback_data=start_page))
+        return markup.as_markup()
+
+    @staticmethod
+    def join_menu() -> InlineKeyboardMarkup:
+        markup = InlineKeyboardBuilder()
+        markup.row(InlineKeyboardButton(text='Получить файлы', callback_data=get_file_page))
         markup.row(InlineKeyboardButton(text='⬅️ Вернуться назад', callback_data=start_page))
         return markup.as_markup()

@@ -7,4 +7,4 @@ class AdminState(StatesGroup):
     add_event = State()
     add_social = State()
     add_form_link = State()
-    add_files = State()
+    add_file = State()
