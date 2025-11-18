@@ -6,6 +6,7 @@ from aiogram.types import Message
 from app.keyboards.markup import Markup
 from app.dao.user import UserDAO
 from app.dao.message import MessageDAO
+from app.dao.resources import ResourcesDAO
 from app.db.session import get_db
 from app.keyboards.callback_data import (
     start_page,
@@ -30,11 +31,11 @@ async def start_command(message: Message):
             full_name=message.from_user.full_name
         )
 
-        await message.answer(
-            '<b>Привет!</b>',
-            parse_mode='HTML',
-            reply_markup=Markup.open_menu()
-        )
+    await message.answer(
+        '<b>Привет!</b>',
+        parse_mode='HTML',
+        reply_markup=Markup.open_menu()
+    )
 
 
 @router.callback_query(F.data == start_page)
@@ -50,63 +51,64 @@ async def start_menu(cb: types.CallbackQuery):
 async def main_menu(cb: types.CallbackQuery):
     async for session in get_db():
         message_text = await MessageDAO.get_text_message(session, main_page)
-        await cb.message.edit_text(
-            message_text,
-            reply_markup=Markup.back_menu(),
-            parse_mode='HTML',
-        )
+    await cb.message.edit_text(
+        message_text,
+        reply_markup=Markup.back_menu(),
+        parse_mode='HTML',
+    )
 
 
 @router.callback_query(F.data == contact_page)
 async def contact_menu(cb: types.CallbackQuery):
     async for session in get_db():
         message_text = await MessageDAO.get_text_message(session, contact_page)
-        await cb.message.edit_text(
-            message_text,
-            reply_markup=Markup.back_menu(),
-            parse_mode='HTML',
-        )
+    await cb.message.edit_text(
+        message_text,
+        reply_markup=Markup.back_menu(),
+        parse_mode='HTML',
+    )
 
 
 @router.callback_query(F.data == event_page)
 async def event_menu(cb: types.CallbackQuery):
     async for session in get_db():
         message_text = await MessageDAO.get_text_message(session, event_page)
-        await cb.message.edit_text(
-            message_text,
-            reply_markup=Markup.back_menu(),
-            parse_mode='HTML',
-        )
+    await cb.message.edit_text(
+        message_text,
+        reply_markup=Markup.back_menu(),
+        parse_mode='HTML',
+    )
 
 
 @router.callback_query(F.data == feedback_page)
 async def feedback_menu(cb: types.CallbackQuery):
     async for session in get_db():
         message_text = await MessageDAO.get_text_message(session, feedback_page)
-        await cb.message.edit_text(
-            message_text,
-            reply_markup=Markup.back_menu(),
-            parse_mode='HTML',
-        )
+        link = await ResourcesDAO.get_resources(session=session, type='link')
+    await cb.message.edit_text(
+        message_text,
+        reply_markup=Markup.feedback_menu(link),
+        parse_mode='HTML',
+    )
 
 
 @router.callback_query(F.data == join_page)
 async def join_menu(cb: types.CallbackQuery):
     async for session in get_db():
         message_text = await MessageDAO.get_text_message(session, join_page)
-        await cb.message.edit_text(
-            message_text,
-            reply_markup=Markup.back_menu(),
-            parse_mode='HTML',
-        )
+    await cb.message.edit_text(
+        message_text,
+        reply_markup=Markup.back_menu(),
+        parse_mode='HTML',
+    )
 
 
 @router.callback_query(F.data == social_page)
 async def social_menu(cb: types.CallbackQuery):
     async for session in get_db():
         message_text = await MessageDAO.get_text_message(session, social_page)
-        await cb.message.edit_text(
-            message_text,
-            reply_markup=Markup.back_menu(),
-            parse_mode='HTML',
-        )
+    await cb.message.edit_text(
+        message_text,
+        reply_markup=Markup.back_menu(),
+        parse_mode='HTML',
+    )

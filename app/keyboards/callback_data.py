@@ -4,6 +4,7 @@ from aiogram.filters.callback_data import CallbackData
 edit_text_messages = 'edit_text_messages_page'
 edit_events = 'edit_events'
 edit_social = 'edit_social'
+edit_form_link = 'edit_form_link'
 
 
 class EditPageCallback(CallbackData, prefix='edit'):

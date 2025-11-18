@@ -8,10 +8,12 @@ from app.keyboards.state import AdminState
 from app.db.session import get_db
 from app.dao.user import UserDAO
 from app.dao.message import MessageDAO
+from app.dao.resources import ResourcesDAO
 from app.keyboards.admin_markup import Markup
 from app.keyboards.callback_data import (
     start_page,
     edit_text_messages,
+    edit_form_link,
     EditPageCallback
 )
 
@@ -20,8 +22,11 @@ class AdminFilter(Filter):
     def __init__(self, admin_ids: list[int]):
         self.admin_ids = admin_ids
 
-    async def __call__(self, message: Message) -> bool:
-        return message.from_user.id in self.admin_ids
+    async def __call__(self, event) -> bool:
+
+        if isinstance(event, Message) or isinstance(event, types.CallbackQuery):
+            return event.from_user.id in self.admin_ids
+        return False
 
 
 admin_filter = AdminFilter(config.ADMIN_IDS)
@@ -47,7 +52,7 @@ async def start_command(message: Message):
         )
 
 
-@admin_router.callback_query(F.data == start_page)
+@admin_router.callback_query(admin_filter, F.data == start_page)
 async def start_menu(cb: types.CallbackQuery):
     await cb.message.edit_text(
         '<b>Добро пожаловать в админ панель</b>',
@@ -56,7 +61,7 @@ async def start_menu(cb: types.CallbackQuery):
     )
 
 
-@admin_router.callback_query(F.data == edit_text_messages)
+@admin_router.callback_query(admin_filter, F.data == edit_text_messages)
 async def edit_main_menu(cb: types.CallbackQuery, state: FSMContext):
     await state.set_state(None)
     message_text = 'Выберите, какую страницу редактировать'
@@ -67,7 +72,7 @@ async def edit_main_menu(cb: types.CallbackQuery, state: FSMContext):
     )
 
 
-@admin_router.callback_query(EditPageCallback.filter())
+@admin_router.callback_query(admin_filter, EditPageCallback.filter())
 async def edit_message(cb: types.CallbackQuery, callback_data: EditPageCallback, state: FSMContext):
     await state.set_state(AdminState.update_text)
     await state.set_data({'page': callback_data.page})
@@ -79,7 +84,7 @@ async def edit_message(cb: types.CallbackQuery, callback_data: EditPageCallback,
     )
 
 
-@admin_router.message(F.text, AdminState.update_text)
+@admin_router.message(admin_filter, F.text, AdminState.update_text)
 async def update_page_text(message: types.Message, state: FSMContext):
     await state.set_state(None)
     data = await state.get_data()
@@ -100,3 +105,35 @@ async def update_page_text(message: types.Message, state: FSMContext):
         )
     else:
         await message.answer('❌ Ошибка при обновлении текста страницы', show_alert=True)
+
+
+@admin_router.callback_query(admin_filter, F.data == edit_form_link)
+async def edit_from_link(cb: types.CallbackQuery, state: FSMContext):
+    await state.set_state(AdminState.add_form_link)
+    message_text = 'Введите ссылку на форму'
+    await cb.message.edit_text(
+        message_text,
+        reply_markup=Markup.back_menu(),
+        parse_mode='HTML',
+    )
+
+
+@admin_router.message(admin_filter, F.text, AdminState.add_form_link)
+async def update_form_link(message: types.Message, state: FSMContext):
+    state.set_state(None)
+    link = message.text
+    success = False
+    async for session in get_db():
+        success = await ResourcesDAO.update_or_create(session=session, type='link', name='link', url=link)
+    if success:
+        await message.answer(
+            f'<b>✅ Ссылка на форму успешно обновлёна!</b>\n<code>{link}</code>',
+            parse_mode='HTML',
+        )
+        await message.answer(
+            text='<b>Добро пожаловать в админ панель</b>',
+            parse_mode='HTML',
+            reply_markup=Markup.open_menu()
+        )
+    else:
+        await message.answer('❌ Ошибка при обновлении ссылки на форму', show_alert=True)

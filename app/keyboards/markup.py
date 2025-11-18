@@ -40,3 +40,10 @@ class Markup:
         markup = InlineKeyboardBuilder()
         markup.row(InlineKeyboardButton(text='⬅️ Вернуться назад', callback_data=start_page))
         return markup.as_markup()
+
+    @staticmethod
+    def feedback_menu(feedback_link) -> InlineKeyboardMarkup:
+        markup = InlineKeyboardBuilder()
+        markup.row(InlineKeyboardButton(text='Ссылка на форму', url=feedback_link))
+        markup.row(InlineKeyboardButton(text='⬅️ Вернуться назад', callback_data=start_page))
+        return markup.as_markup()

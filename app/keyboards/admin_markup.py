@@ -12,6 +12,7 @@ from app.keyboards.callback_data import (
     edit_text_messages,
     edit_events,
     edit_social,
+    edit_form_link,
     EditPageCallback,
 )
 
@@ -24,6 +25,7 @@ class Markup:
             {'Изменить текст сообщений': edit_text_messages},
             {'Редактировать мероприятия': edit_events},
             {'Редактировать соц. программы': edit_social},
+            {'Добавить/Изменить ссылку на форму': edit_form_link},
         ]
         for buttons in buttons_panel:
             markup.row(
