@@ -49,6 +49,7 @@ exclude =
     ui*,
     resources*
     alembic,
+    alembic/versions,
     env,
     templates,
     html_work.py,

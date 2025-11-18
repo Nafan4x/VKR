@@ -70,7 +70,7 @@ async def edit_main_menu(cb: types.CallbackQuery, state: FSMContext):
 @admin_router.callback_query(EditPageCallback.filter())
 async def edit_message(cb: types.CallbackQuery, callback_data: EditPageCallback, state: FSMContext):
     await state.set_state(AdminState.update_text)
-    await state.set_data({"page": callback_data.page})
+    await state.set_data({'page': callback_data.page})
     message_text = f'Выбрана страница: {callback_data.page}.\nНапишите текст для страницы ниже:'
     await cb.message.edit_text(
         message_text,
@@ -80,7 +80,7 @@ async def edit_message(cb: types.CallbackQuery, callback_data: EditPageCallback,
 
 
 @admin_router.message(F.text, AdminState.update_text)
-async def update_page_text(message: types.Message,  state: FSMContext):
+async def update_page_text(message: types.Message, state: FSMContext):
     await state.set_state(None)
     data = await state.get_data()
     page = data.get('page')
