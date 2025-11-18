@@ -17,15 +17,19 @@ class Markup:
     def open_menu() -> InlineKeyboardMarkup:
         markup = InlineKeyboardBuilder()
         buttons_panel = [
-            {'Главная': main_page},
-            {'Как вступить?': join_page},
             {
-                'Социальные программы': social_page,
-                'Мероприятия': event_page
+                'Главная 🏠': main_page
             },
             {
-                'Как связаться?': contact_page,
-                'Обратная связь': feedback_page
+                'Как вступить? ✍️': join_page,
+            },
+            {
+                'Социальные программы 🤝': social_page,
+                'Мероприятия 🎉': event_page
+            },
+            {
+                'Как связаться? 📞': contact_page,
+                'Обратная связь 💬': feedback_page
             }
         ]
         for buttons in buttons_panel:
