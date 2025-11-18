@@ -251,7 +251,7 @@ async def succefull_add_file_page(message: types.Message, state: FSMContext):
         )
     else:
         await downloading_msg.edit_text(
-            '❌ Ошибка при добавлении файла, возможно файл с таким именем уже существует', 
+            '❌ Ошибка при добавлении файла, возможно файл с таким именем уже существует',
             show_alert=True,
             reply_markup=Markup.back_special_menu(edit_files),
         )
