@@ -9,3 +9,4 @@ class User(Base):
     id = Column(Integer, primary_key=True)
     tg_id = Column(BigInteger, unique=True, nullable=False)
     username = Column(String, nullable=True)
+    full_name = Column(String, nullable=True)
