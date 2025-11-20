@@ -20,7 +20,11 @@ class UserDAO:
         is_first = False
 
         if not user:
-            user = User(tg_id=telegram_id, username=username, full_name=full_name)
+            user = User(
+                tg_id=telegram_id,
+                username=username if username else None,
+                full_name=full_name if full_name else None
+            )
             session.add(user)
             is_first = True
         else:
