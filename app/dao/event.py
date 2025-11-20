@@ -20,7 +20,14 @@ class EventsDAO:
         events = result.scalars().all()
         await session.commit()
         if events:
-            return [(event.id, event.name, event.date) for event in events]
+            return [
+                (
+                    event.id,
+                    event.name,
+                    event.date.strftime('%H:%M %d.%m.%Y'),
+                    event.description)
+                for event in events
+            ]
         return None
 
     @staticmethod

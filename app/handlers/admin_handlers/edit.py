@@ -31,7 +31,9 @@ async def edit_main_menu(cb: types.CallbackQuery, state: FSMContext):
 async def edit_message(cb: types.CallbackQuery, callback_data: EditPageCallback, state: FSMContext):
     await state.set_state(AdminState.update_text)
     await state.set_data({'page': callback_data.page})
-    message_text = f'Выбрана страница: {callback_data.page}.\nНапишите текст для страницы ниже:'
+    async for sesson in get_db():
+        current_text = MessageDAO.get_text_message(session=sesson, callback_data=callback_data.page)
+    message_text = f'Выбрана страница: {callback_data.page}.\nТекущий текст:\n{current_text}\nНапишите новый текст для страницы ниже:'
     await cb.message.edit_text(
         message_text,
         reply_markup=Markup.back_special_menu(edit_text_messages),

@@ -27,7 +27,7 @@ async def edit_events_page(cb: types.CallbackQuery, state: FSMContext):
     message_text = 'Текущие мероприятия:\n\n'
     if events:
         for i in events:
-            message_text += f'{i[0]}: {i[1]}: {str(i[2])}\n'
+            message_text += f'<b>{i[0]}</b>: {i[1]}: \n{str(i[2])}\n<i>{i[3]}</i>\n'
     else:
         message_text += 'Пусто\n'
     message_text += '\n Для добавления или удаление файлов используйте кнопки ниже'
@@ -99,7 +99,7 @@ async def succefull_event_name_page(message: types.Message, state: FSMContext):
     event_name = message.text
     await state.set_data({'event_name': event_name})
     name_succes_msg = await message.answer(
-        f'✅ Отлично, теперь отправьте дату для {event_name}',
+        f'✅ Отлично, теперь отправьте дату и время для {event_name} в формате "ч.м.г время"',
         parse_mode='HTML',
         reply_markup=Markup.back_special_menu(edit_events),
     )
@@ -114,7 +114,8 @@ async def succefull_event_date_page(message: types.Message, state: FSMContext):
     if not datetime_date:
         state_data = await state.get_data()
         name_succes_msg = state_data.get('name_succes_msg')
-        await name_succes_msg.delete()
+        if name_succes_msg:
+            await name_succes_msg.delete()
         await message.answer(
             '⚠️ Пожалуйста, укажите корректую дату',
             reply_markup=Markup.back_special_menu(edit_events)
@@ -153,9 +154,9 @@ async def succefull_event_text_page(message: types.Message, state: FSMContext):
 
     name_succes_msg = state_data.get('name_succes_msg')
     date_succes_msg = state_data.get('date_succes_msg')
-
-    await name_succes_msg.delete()
-    await date_succes_msg.delete()
+    if name_succes_msg and date_succes_msg:
+        await name_succes_msg.delete()
+        await date_succes_msg.delete()
 
     if event:
         date_succes_msg = await message.answer(
