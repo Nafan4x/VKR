@@ -20,6 +20,16 @@ class SocialDAO:
         return None
 
     @staticmethod
+    async def get_by_id(session: AsyncSession, social_id: int) -> bool:
+        result = await session.execute(
+            select(Social).where(Social.id == social_id)
+        )
+        social = result.scalar_one_or_none()
+
+        await session.commit()
+        return (social.id, social.name, social.description)
+
+    @staticmethod
     async def update_or_create(
         session: AsyncSession,
         name: str = None,

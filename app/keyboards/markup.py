@@ -10,6 +10,7 @@ from app.keyboards.callback_data import (
     social_page,
     start_page,
     get_file_page,
+    ShowSocialCallback
 )
 
 
@@ -58,4 +59,18 @@ class Markup:
         markup = InlineKeyboardBuilder()
         markup.row(InlineKeyboardButton(text='Получить файлы', callback_data=get_file_page))
         markup.row(InlineKeyboardButton(text='⬅️ Вернуться назад', callback_data=start_page))
+        return markup.as_markup()
+
+    @staticmethod
+    def social_items_menu(socials) -> InlineKeyboardMarkup:
+        markup = InlineKeyboardBuilder()
+        for social in socials:
+            markup.row(InlineKeyboardButton(text=f'{social[1]}', callback_data=ShowSocialCallback(id=social[0]).pack()))
+        markup.row(InlineKeyboardButton(text='⬅️ Вернуться назад', callback_data=start_page))
+        return markup.as_markup()
+
+    @staticmethod
+    def back_special_menu(back_page: str) -> InlineKeyboardMarkup:
+        markup = InlineKeyboardBuilder()
+        markup.row(InlineKeyboardButton(text='⬅️ Вернуться назад', callback_data=back_page))
         return markup.as_markup()

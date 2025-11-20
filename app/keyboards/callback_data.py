@@ -44,3 +44,7 @@ contact_page = 'contact_page'
 feedback_page = 'feedback_page'
 get_file_page = 'get_file_page'
 delete_from_chat = 'delete_from_chat'
+
+
+class ShowSocialCallback(CallbackData, prefix='show-social'):
+    id: int

@@ -1,10 +1,8 @@
 from aiogram import F, Router, types
 from aiogram.fsm.context import FSMContext
 
-import os
 
 from app.handlers.admin_handlers.filter import admin_filter
-from app.config import config
 from app.keyboards.state import AdminState
 from app.db.session import get_db
 from app.dao.social import SocialDAO

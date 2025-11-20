@@ -8,6 +8,8 @@ from app.keyboards.markup import Markup
 from app.dao.user import UserDAO
 from app.dao.message import MessageDAO
 from app.dao.resources import ResourcesDAO
+from app.dao.event import EventsDAO
+from app.dao.social import SocialDAO
 from app.db.session import get_db
 from app.keyboards.callback_data import (
     start_page,
@@ -18,6 +20,7 @@ from app.keyboards.callback_data import (
     join_page,
     social_page,
     get_file_page,
+    ShowSocialCallback
 )
 
 router = Router()
@@ -76,6 +79,12 @@ async def contact_menu(cb: types.CallbackQuery):
 async def event_menu(cb: types.CallbackQuery):
     async for session in get_db():
         message_text = await MessageDAO.get_text_message(session, event_page)
+        events = await EventsDAO.get_sorted_events(session=session)
+    events_text = ''
+    for event in events:
+        event_text = f'\n<b>{event[2]} - {event[0]}</b>\n<i>{event[1]}</i>\n'
+        events_text += event_text
+    message_text += '\n' + events_text
     await cb.message.edit_text(
         message_text,
         reply_markup=Markup.back_menu(),
@@ -130,8 +139,28 @@ async def get_file_menu(cb: types.CallbackQuery):
 async def social_menu(cb: types.CallbackQuery):
     async for session in get_db():
         message_text = await MessageDAO.get_text_message(session, social_page)
+        socials = await SocialDAO.get_socials(session=session)
     await cb.message.edit_text(
         message_text,
-        reply_markup=Markup.back_menu(),
+        reply_markup=Markup.social_items_menu(socials),
         parse_mode='HTML',
     )
+
+
+@router.callback_query(ShowSocialCallback.filter())
+async def deleting_file(cb: types.CallbackQuery, callback_data: ShowSocialCallback):
+    id = callback_data.id
+    async for session in get_db():
+        social = await SocialDAO.get_by_id(session=session, social_id=id)
+    if social:
+        await cb.message.edit_text(
+            f'<b>🎉 {social[1]}</b>\n\n{social[2]}',
+            parse_mode='HTML',
+            reply_markup=Markup.back_special_menu(social_page)
+        )
+    else:
+        await cb.message.edit_text(
+            '❌ Ошибка',
+            show_alert=True,
+            reply_markup=Markup.back_special_menu(social_page)
+        )

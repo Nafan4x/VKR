@@ -1,12 +1,11 @@
-from sqlalchemy import select
+from sqlalchemy import select, asc
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from dateutil import parser
 
-from datetime import datetime
+from datetime import datetime, timedelta
 
 from app.db.models.event import Event
-
 
 
 class EventsDAO:
@@ -22,6 +21,26 @@ class EventsDAO:
         await session.commit()
         if events:
             return [(event.id, event.name, event.date) for event in events]
+        return None
+
+    @staticmethod
+    async def get_sorted_events(session: AsyncSession) -> list:
+        now = datetime.utcnow()
+        cutoff_time = now - timedelta(hours=2)
+
+        result = await session.execute(
+            select(Event)
+            .where(Event.date >= cutoff_time)
+            .order_by(asc(Event.date))
+        )
+        events = result.scalars().all()
+        await session.commit()
+
+        if events:
+            return [
+                (event.name, event.description, event.date.strftime('%H:%M %d.%m.%Y'))
+                for event in events
+            ]
         return None
 
     @staticmethod
