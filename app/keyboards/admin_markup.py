@@ -15,9 +15,15 @@ from app.keyboards.callback_data import (
     edit_form_link,
     edit_files,
     delete_file,
+    add_event,
+    delete_event,
     add_file,
+    delete_social,
+    add_social,
     EditPageCallback,
-    DeleteFileCallback
+    DeleteFileCallback,
+    DeleteEventCallback,
+    DeleteSocialCallback
 )
 
 
@@ -100,6 +106,68 @@ class Markup:
             button = InlineKeyboardButton(
                 text=f'{file_id}',
                 callback_data=DeleteFileCallback(id=file_id).pack()
+            )
+            row_buttons.append(button)
+            if i % 5 == 0:
+                markup.row(*row_buttons)
+                row_buttons = []
+        if row_buttons:
+            markup.row(*row_buttons)
+        markup.row(
+            InlineKeyboardButton(text='⬅️ Вернуться назад', callback_data=start_page)
+        )
+        return markup.as_markup()
+
+    @staticmethod
+    def edit_events_menu() -> InlineKeyboardMarkup:
+        markup = InlineKeyboardBuilder()
+        markup.row(
+            InlineKeyboardButton(text='➖', callback_data=delete_event),
+            InlineKeyboardButton(text='➕', callback_data=add_event),
+        )
+        markup.row(InlineKeyboardButton(text='⬅️ Вернуться назад', callback_data=start_page))
+        return markup.as_markup()
+
+    @staticmethod
+    def delete_events_menu(files_ids: list) -> InlineKeyboardMarkup:
+        markup = InlineKeyboardBuilder()
+        row_buttons = []
+
+        for i, file_id in enumerate(files_ids, start=1):
+            button = InlineKeyboardButton(
+                text=f'{file_id}',
+                callback_data=DeleteEventCallback(id=file_id).pack()
+            )
+            row_buttons.append(button)
+            if i % 5 == 0:
+                markup.row(*row_buttons)
+                row_buttons = []
+        if row_buttons:
+            markup.row(*row_buttons)
+        markup.row(
+            InlineKeyboardButton(text='⬅️ Вернуться назад', callback_data=start_page)
+        )
+        return markup.as_markup()
+
+    @staticmethod
+    def edit_social_menu() -> InlineKeyboardMarkup:
+        markup = InlineKeyboardBuilder()
+        markup.row(
+            InlineKeyboardButton(text='➖', callback_data=delete_social),
+            InlineKeyboardButton(text='➕', callback_data=add_social),
+        )
+        markup.row(InlineKeyboardButton(text='⬅️ Вернуться назад', callback_data=start_page))
+        return markup.as_markup()
+
+    @staticmethod
+    def delete_social_menu(files_ids: list) -> InlineKeyboardMarkup:
+        markup = InlineKeyboardBuilder()
+        row_buttons = []
+
+        for i, file_id in enumerate(files_ids, start=1):
+            button = InlineKeyboardButton(
+                text=f'{file_id}',
+                callback_data=DeleteSocialCallback(id=file_id).pack()
             )
             row_buttons.append(button)
             if i % 5 == 0:

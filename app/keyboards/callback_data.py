@@ -9,12 +9,28 @@ edit_files = 'edit_files'
 delete_file = 'delete_file'
 add_file = 'add_file'
 
+edit_event = 'edit_event'
+delete_event = 'delete_event'
+add_event = 'add_event'
+
+edit_social = 'edit_social'
+delete_social = 'delete_social'
+add_social = 'add_social'
+
 
 class EditPageCallback(CallbackData, prefix='edit'):
     page: str
 
 
 class DeleteFileCallback(CallbackData, prefix='del'):
+    id: int
+
+
+class DeleteEventCallback(CallbackData, prefix='del-event'):
+    id: int
+
+
+class DeleteSocialCallback(CallbackData, prefix='del-social'):
     id: int
 
 

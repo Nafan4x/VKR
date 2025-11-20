@@ -12,8 +12,8 @@ class Event(Base):
     name = Column(String, nullable=True)
     description = Column(String, nullable=True)
 
-    created_at = Column(
-        DateTime(timezone=True),
+    date = Column(
+        DateTime(timezone=False),
         default=datetime(2010, 1, 1, 12, 0),
         nullable=False
     )
