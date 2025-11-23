@@ -6,6 +6,7 @@ from .link import admin_router as link_router
 from .edit import admin_router as edit_router
 from .socials import admin_router as social_router
 from .events import admin_router as event_router
+from .feedback import admin_router as feedback_router
 from .filter import admin_filter
 
 admin_router = Router()
@@ -17,3 +18,4 @@ admin_router.include_router(link_router)
 admin_router.include_router(edit_router)
 admin_router.include_router(social_router)
 admin_router.include_router(event_router)
+admin_router.include_router(feedback_router)

@@ -23,7 +23,8 @@ from app.keyboards.callback_data import (
     EditPageCallback,
     DeleteFileCallback,
     DeleteEventCallback,
-    DeleteSocialCallback
+    DeleteSocialCallback,
+    DeleteMessageCallback
 )
 
 
@@ -177,5 +178,27 @@ class Markup:
             markup.row(*row_buttons)
         markup.row(
             InlineKeyboardButton(text='⬅️ Вернуться назад', callback_data=start_page)
+        )
+        return markup.as_markup()
+    
+    @staticmethod
+    def feedback_reply(chat_id, feedback_id) -> InlineKeyboardMarkup:
+        markup = InlineKeyboardBuilder()
+        markup.row(
+                InlineKeyboardButton(
+                text="✉️ Ответить",
+                callback_data=f"reply_{chat_id}_{feedback_id}"
+            )
+        )
+        return markup.as_markup()
+    
+    @staticmethod
+    def delete_this_message(msg_id) -> InlineKeyboardMarkup:
+        markup = InlineKeyboardBuilder()
+        markup.row(
+                InlineKeyboardButton(
+                text="Не отвечать",
+                callback_data=DeleteMessageCallback(id=msg_id).pack()
+            )
         )
         return markup.as_markup()

@@ -34,3 +34,15 @@ class UserDAO:
         await session.refresh(user)
 
         return user, is_first
+    
+    @staticmethod
+    async def get_all_users_ids(
+        session: AsyncSession,
+    ) -> list:
+
+        result = await session.execute(
+        select(User.tg_id)
+    )
+        user_ids = result.scalars().all()
+        return user_ids
+    

@@ -1,6 +1,7 @@
 from aiogram import F, Router, types
 from aiogram.filters import Filter, CommandStart
 from aiogram.types import Message
+from aiogram.fsm.context import FSMContext
 
 
 from app.handlers.admin_handlers.filter import admin_filter
@@ -45,7 +46,8 @@ async def start_command(message: Message):
 
 
 @admin_router.callback_query(admin_filter, F.data == start_page)
-async def start_menu(cb: types.CallbackQuery):
+async def start_menu(cb: types.CallbackQuery, state: FSMContext):
+    await state.set_state(None)
     await cb.message.edit_text(
         '<b>Добро пожаловать в админ панель</b>',
         parse_mode='HTML',
