@@ -18,6 +18,7 @@ delete_social = 'delete_social'
 add_social = 'add_social'
 
 
+
 class EditPageCallback(CallbackData, prefix='edit'):
     page: str
 
@@ -25,6 +26,8 @@ class EditPageCallback(CallbackData, prefix='edit'):
 class DeleteFileCallback(CallbackData, prefix='del'):
     id: int
 
+class DeleteMessageCallback(CallbackData, prefix='del-msg'):
+    id: int
 
 class DeleteEventCallback(CallbackData, prefix='del-event'):
     id: int
@@ -44,6 +47,8 @@ contact_page = 'contact_page'
 feedback_page = 'feedback_page'
 get_file_page = 'get_file_page'
 delete_from_chat = 'delete_from_chat'
+
+input_feedback = 'input_feedback'
 
 
 class ShowSocialCallback(CallbackData, prefix='show-social'):

@@ -2,12 +2,16 @@ from aiogram import F, Router, types
 from aiogram.filters import CommandStart
 from aiogram.types import InputMediaDocument, FSInputFile
 from aiogram.types import Message
+from aiogram.fsm.context import FSMContext
 
-
+from app.config import config
 from app.keyboards.markup import Markup
+from app.keyboards.admin_markup import Markup as AdminMarkup
+from app.keyboards.state import UserState
 from app.dao.user import UserDAO
 from app.dao.message import MessageDAO
 from app.dao.resources import ResourcesDAO
+from app.dao.feedback import FeedbackDAO
 from app.dao.event import EventsDAO
 from app.dao.social import SocialDAO
 from app.db.session import get_db
@@ -20,6 +24,7 @@ from app.keyboards.callback_data import (
     join_page,
     social_page,
     get_file_page,
+    input_feedback,
     ShowSocialCallback
 )
 
@@ -92,18 +97,6 @@ async def event_menu(cb: types.CallbackQuery):
     )
 
 
-@router.callback_query(F.data == feedback_page)
-async def feedback_menu(cb: types.CallbackQuery):
-    async for session in get_db():
-        message_text = await MessageDAO.get_text_message(session, feedback_page)
-        link = await ResourcesDAO.get_resources(session=session, type='link')
-    await cb.message.edit_text(
-        message_text,
-        reply_markup=Markup.feedback_menu(link),
-        parse_mode='HTML',
-    )
-
-
 @router.callback_query(F.data == join_page)
 async def join_menu(cb: types.CallbackQuery):
     async for session in get_db():
@@ -164,3 +157,67 @@ async def deleting_file(cb: types.CallbackQuery, callback_data: ShowSocialCallba
             show_alert=True,
             reply_markup=Markup.back_special_menu(social_page)
         )
+
+
+@router.callback_query(F.data == feedback_page)
+async def feedback_menu(cb: types.CallbackQuery, state: FSMContext):
+    await state.set_state(None)
+    async for session in get_db():
+        message_text = await MessageDAO.get_text_message(session, feedback_page)
+    await cb.message.edit_text(
+        message_text,
+        reply_markup=Markup.feedback_menu(),
+        parse_mode='HTML',
+    )
+
+@router.callback_query(F.data == input_feedback)
+async def feedback_menu(cb: types.CallbackQuery, state: FSMContext):
+    await state.set_state(UserState.input_feedback)
+    message_text = 'Напишите сообщение в поддержку:'
+    await cb.message.edit_text(
+        message_text,
+        reply_markup=Markup.back_special_menu(feedback_page),
+        parse_mode='HTML',
+    )
+
+@router.message(F.text, UserState.input_feedback)
+async def update_page_text(message: types.Message, state: FSMContext):
+    await state.set_state(None)
+
+    text_message = message.text
+
+    async for session in get_db():
+        feedback_id = await FeedbackDAO.create(
+            session=session,
+            from_user_id=message.chat.id,
+            question=text_message
+        )
+    try:
+        if config.ADMIN_IDS:
+            for admin_id in config.ADMIN_IDS:
+                await message.bot.send_message(
+                    admin_id,
+                    f"📩 Новое обращение в поддержку:\n\n"
+                    f"👤 <b>Пользователь:</b> {message.chat.id}\n"
+                    f"💬 <b>Вопрос:</b> {text_message}",
+                    parse_mode="HTML",
+                    reply_markup=AdminMarkup.feedback_reply(message.chat.id, feedback_id)
+                )
+            success_sending = True
+        else: 
+            success_sending = False
+    except:
+        success_sending = False
+    if feedback_id and success_sending:
+        await message.answer(
+            '<b>✅ Ваш вопрос успешно отправлен!</b>',
+            parse_mode='HTML',
+        )
+        await message.answer(
+            text=start_message_text,
+            parse_mode='HTML',
+            reply_markup=Markup.open_menu()
+        )
+    else:
+        await message.answer('❌ Ошибка при отправке вопроса', show_alert=True)
+    

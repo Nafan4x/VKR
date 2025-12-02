@@ -13,3 +13,8 @@ class AdminState(StatesGroup):
 
     add_social_name = State()
     add_social_text = State()
+
+    input_feedback_answer = State()
+
+class UserState(StatesGroup):
+    input_feedback = State()
