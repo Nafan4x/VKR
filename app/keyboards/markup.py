@@ -11,6 +11,7 @@ from app.keyboards.callback_data import (
     start_page,
     get_file_page,
     input_feedback,
+    member_card_page,
     ShowSocialCallback
 )
 
@@ -25,6 +26,7 @@ class Markup:
             },
             {
                 'Как вступить? ✍️': join_page,
+                'Номер билета ✍️': member_card_page,
             },
             {
                 'Социальные программы 🤝': social_page,

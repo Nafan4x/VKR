@@ -5,6 +5,7 @@ from aiogram.types import Message
 from aiogram.fsm.context import FSMContext
 
 from app.config import config
+from app.handlers.utils import exel_reader
 from app.keyboards.markup import Markup
 from app.keyboards.admin_markup import Markup as AdminMarkup
 from app.keyboards.state import UserState
@@ -25,6 +26,8 @@ from app.keyboards.callback_data import (
     social_page,
     get_file_page,
     input_feedback,
+    member_card_page,
+    input_name,
     ShowSocialCallback
 )
 
@@ -33,7 +36,8 @@ start_message_text = '<b>Привет!</b>'
 
 
 @router.message(CommandStart())
-async def start_command(message: Message):
+async def start_command(message: Message, state: FSMContext):
+    await state.set_state(None)
     async for session in get_db():
         user, is_first = await UserDAO.update_or_create(
             session=session,
@@ -50,7 +54,8 @@ async def start_command(message: Message):
 
 
 @router.callback_query(F.data == start_page)
-async def start_menu(cb: types.CallbackQuery):
+async def start_menu(cb: types.CallbackQuery, state: FSMContext):
+    await state.set_state(None)
     await cb.message.edit_text(
         start_message_text,
         parse_mode='HTML',
@@ -67,6 +72,7 @@ async def main_menu(cb: types.CallbackQuery):
         reply_markup=Markup.back_menu(),
         parse_mode='HTML',
     )
+
 
 
 @router.callback_query(F.data == contact_page)
@@ -170,8 +176,9 @@ async def feedback_menu(cb: types.CallbackQuery, state: FSMContext):
         parse_mode='HTML',
     )
 
+
 @router.callback_query(F.data == input_feedback)
-async def feedback_menu(cb: types.CallbackQuery, state: FSMContext):
+async def feedback_menu_2(cb: types.CallbackQuery, state: FSMContext):
     await state.set_state(UserState.input_feedback)
     message_text = 'Напишите сообщение в поддержку:'
     await cb.message.edit_text(
@@ -179,6 +186,7 @@ async def feedback_menu(cb: types.CallbackQuery, state: FSMContext):
         reply_markup=Markup.back_special_menu(feedback_page),
         parse_mode='HTML',
     )
+
 
 @router.message(F.text, UserState.input_feedback)
 async def update_page_text(message: types.Message, state: FSMContext):
@@ -220,4 +228,43 @@ async def update_page_text(message: types.Message, state: FSMContext):
         )
     else:
         await message.answer('❌ Ошибка при отправке вопроса', show_alert=True)
-    
+
+
+@router.callback_query(F.data == member_card_page)
+async def member_menu(cb: types.CallbackQuery, state: FSMContext):
+    await state.set_state(UserState.input_name)
+    async for session in get_db():
+        message_text = await MessageDAO.get_text_message(session, member_card_page)
+    input_name_msg = await cb.message.edit_text(
+        message_text,
+        reply_markup=Markup.back_special_menu(start_page),
+        parse_mode='HTML',
+    )
+    await state.set_data({'input_name_msg': input_name_msg})
+
+
+@router.message(F.text, UserState.input_name)
+async def input_name_msg(message: types.Message, state: FSMContext):
+    data = await state.get_data()
+    input_name_msg = data.get('input_name_msg')
+    if input_name_msg:
+        await input_name_msg.delete()
+    await state.set_state(None)
+
+    text_message = message.text
+    member_card = await exel_reader.get_number_by_name(text_message)
+    if member_card:
+        await message.answer(
+            f'<b>✅ Отлично!</b>\nФИО: <code>{text_message}</code>\nНомер билета: <code>{member_card}</code>',
+            parse_mode='HTML',
+        )
+    else:
+        await message.answer(
+            f'<b>❌ Ошибка:</b> <i>ФИО "{text_message}" не найдено в базе данных</i>',
+            parse_mode='HTML',
+        )
+    await message.answer(
+        text=start_message_text,
+        parse_mode='HTML',
+        reply_markup=Markup.open_menu()
+    )

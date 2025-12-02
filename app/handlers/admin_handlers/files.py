@@ -105,7 +105,9 @@ async def succefull_add_file_page(message: types.Message, state: FSMContext):
     file = await message.bot.get_file(file_id)
     file_path = file.file_path
 
-    save_path = os.path.join(config.RESOURCE_PATH, filename)
+    if not os.path.exists(f'{config.RESOURCE_PATH}/files'):
+        os.makedirs(f'{config.RESOURCE_PATH}/files', exist_ok=True)
+    save_path = os.path.join(f'{config.RESOURCE_PATH}/files', filename)
     await message.bot.download_file(file_path, destination=save_path)
 
     os.makedirs(os.path.dirname(save_path), exist_ok=True)

@@ -47,8 +47,10 @@ contact_page = 'contact_page'
 feedback_page = 'feedback_page'
 get_file_page = 'get_file_page'
 delete_from_chat = 'delete_from_chat'
+member_card_page = 'member_card_page'
 
 input_feedback = 'input_feedback'
+input_name = 'input_name'
 
 
 class ShowSocialCallback(CallbackData, prefix='show-social'):

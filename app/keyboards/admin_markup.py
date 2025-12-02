@@ -20,6 +20,7 @@ from app.keyboards.callback_data import (
     add_file,
     delete_social,
     add_social,
+    member_card_page,
     EditPageCallback,
     DeleteFileCallback,
     DeleteEventCallback,
@@ -36,7 +37,7 @@ class Markup:
             {'Изменить текст сообщений': edit_text_messages},
             {'Редактировать мероприятия': edit_events},
             {'Редактировать соц. программы': edit_social},
-            {'Добавить/Изменить ссылку на форму': edit_form_link},
+            {'Добавить/Изменить exel файл': edit_form_link},
             {'Добавить/Изменить файлы для поступления': edit_files},
         ]
         for buttons in buttons_panel:
@@ -51,7 +52,8 @@ class Markup:
         markup = InlineKeyboardBuilder()
         buttons_panel = [
             {'Главная': main_page},
-            {'Как вступить?': join_page},
+            {'Как вступить?': join_page,
+             'Номер билета': member_card_page},
             {
                 'Социальные программы': social_page,
                 'Мероприятия': event_page
@@ -180,7 +182,7 @@ class Markup:
             InlineKeyboardButton(text='⬅️ Вернуться назад', callback_data=start_page)
         )
         return markup.as_markup()
-    
+
     @staticmethod
     def feedback_reply(chat_id, feedback_id) -> InlineKeyboardMarkup:
         markup = InlineKeyboardBuilder()
@@ -191,7 +193,7 @@ class Markup:
             )
         )
         return markup.as_markup()
-    
+
     @staticmethod
     def delete_this_message(msg_id) -> InlineKeyboardMarkup:
         markup = InlineKeyboardBuilder()

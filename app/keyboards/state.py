@@ -5,7 +5,7 @@ class AdminState(StatesGroup):
     update_text = State()
 
     add_event_text = State()
-    add_form_link = State()
+    add_exel_file = State()
     add_file = State()
 
     add_event_name = State()
@@ -16,5 +16,7 @@ class AdminState(StatesGroup):
 
     input_feedback_answer = State()
 
+
 class UserState(StatesGroup):
     input_feedback = State()
+    input_name = State()

@@ -2,6 +2,7 @@ from sqlalchemy import select, update
 from sqlalchemy.ext.asyncio import AsyncSession
 
 import os
+from datetime import datetime
 
 from app.db.models.resources import Resources
 
@@ -16,11 +17,12 @@ class ResourcesDAO:
         result = await session.execute(
             select(Resources).where(Resources.type == type)
         )
-        if type == 'link':
+        if type == 'exel':
             resource = result.scalar_one_or_none()
-            link = resource.url
+            filename = resource.name
+            create_date = resource.created_at
             await session.commit()
-            return link
+            return {'filename': filename, 'create_date': create_date}
         elif type == 'file':
             resources = result.scalars().all()
             await session.commit()
@@ -49,6 +51,7 @@ class ResourcesDAO:
                 await session.commit()
                 return False
             resource.url = url
+            resource.created_at=datetime.utcnow()
 
         await session.commit()
         await session.refresh(resource)
