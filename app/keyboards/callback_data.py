@@ -5,6 +5,7 @@ edit_text_messages = 'edit_text_messages_page'
 edit_events = 'edit_events'
 edit_social = 'edit_social'
 edit_form_link = 'edit_form_link'
+raffle_page = 'raffle_page'
 edit_files = 'edit_files'
 delete_file = 'delete_file'
 add_file = 'add_file'
@@ -12,11 +13,13 @@ add_file = 'add_file'
 edit_event = 'edit_event'
 delete_event = 'delete_event'
 add_event = 'add_event'
+add_raffle = 'add_raffle'
 
 edit_social = 'edit_social'
 delete_social = 'delete_social'
 add_social = 'add_social'
 
+pick_raffle_winner = 'pick_raffle_winner'
 
 
 class EditPageCallback(CallbackData, prefix='edit'):
@@ -36,6 +39,10 @@ class DeleteEventCallback(CallbackData, prefix='del-event'):
 class DeleteSocialCallback(CallbackData, prefix='del-social'):
     id: int
 
+class PickWinnerCallback(CallbackData, prefix='raf_win'):
+    id: int
+
+
 
 # User callbacks
 start_page = 'start_page'
@@ -54,4 +61,8 @@ input_name = 'input_name'
 
 
 class ShowSocialCallback(CallbackData, prefix='show-social'):
+    id: int
+
+
+class RaffleAcceptCallback(CallbackData, prefix='raf_apt'):
     id: int

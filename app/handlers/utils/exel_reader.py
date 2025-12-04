@@ -1,10 +1,16 @@
 import asyncio
+import os
 
 import pandas as pd
 
+from app.config import config
+
 
 async def get_number_by_name(fio: str) -> str | None:
-    filepath = 'resources/files/Список из 1с студенты.xls'
+    file_path = f'{config.RESOURCE_PATH}/exel'
+    files = os.listdir(file_path)
+    if files:  # если список не пустой
+        filepath = os.path.join(file_path, files[0])
     df = await asyncio.to_thread(pd.read_excel, filepath)
 
     row = df.loc[df['ФИО'] == fio]

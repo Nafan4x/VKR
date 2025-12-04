@@ -1,8 +1,8 @@
-"""seed users table
+"""Insert initial messages
 
-Revision ID: c497c01c3b05
-Revises: 10d07db05f77
-Create Date: 2025-11-18 20:27:09.820040
+Revision ID: 00b6a60e7de6
+Revises: ca2db034fb51
+Create Date: 2025-12-02 13:52:03.295241
 
 """
 from typing import Sequence, Union
@@ -12,14 +12,14 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision: str = 'c497c01c3b05'
-down_revision: Union[str, Sequence[str], None] = '10d07db05f77'
+revision: str = '00b6a60e7de6'
+down_revision: Union[str, Sequence[str], None] = 'ca2db034fb51'
 branch_labels: Union[str, Sequence[str], None] = None
 depends_on: Union[str, Sequence[str], None] = None
 
 
-def upgrade():
-    # список данных
+def upgrade() -> None:
+   # список данных
     data = [
         (1, 'Главная', 'main_page'),
         (2, 'Как вступить?', 'join_page'),
@@ -27,7 +27,7 @@ def upgrade():
         (4, 'Мероприятия', 'event_page'),
         (5, 'Как связаться?', 'contact_page'),
         (6, 'Обратная связь', 'feedback_page'),
-        (6, 'Номер билета', 'member_card_page'),
+        (7, 'Номер билета', 'member_card_page'),
     ]
 
     # вставка с проверкой на существование
@@ -47,12 +47,12 @@ def upgrade():
                 callback_text=callback_text
             )
         )
+    pass
 
 
-def downgrade():
-    # удаляем только те строки, которые мы создавали
+def downgrade() -> None:
     op.execute(
         """
-        DELETE FROM message WHERE id IN (1, 2, 3, 4, 5, 6);
+        DELETE FROM message WHERE id IN (1, 2, 3, 4, 5, 6, 7);
         """
     )

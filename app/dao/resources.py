@@ -19,10 +19,11 @@ class ResourcesDAO:
         )
         if type == 'exel':
             resource = result.scalar_one_or_none()
-            filename = resource.name
-            create_date = resource.created_at
-            await session.commit()
-            return {'filename': filename, 'create_date': create_date}
+            if resource:
+                filename = resource.name
+                create_date = resource.created_at
+                await session.commit()
+                return {'filename': filename, 'create_date': create_date}
         elif type == 'file':
             resources = result.scalars().all()
             await session.commit()

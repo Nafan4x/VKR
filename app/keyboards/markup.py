@@ -12,7 +12,8 @@ from app.keyboards.callback_data import (
     get_file_page,
     input_feedback,
     member_card_page,
-    ShowSocialCallback
+    ShowSocialCallback,
+    RaffleAcceptCallback
 )
 
 
@@ -67,9 +68,16 @@ class Markup:
     @staticmethod
     def social_items_menu(socials) -> InlineKeyboardMarkup:
         markup = InlineKeyboardBuilder()
-        for social in socials:
-            markup.row(InlineKeyboardButton(text=f'{social[1]}', callback_data=ShowSocialCallback(id=social[0]).pack()))
+        if socials:
+            for social in socials:
+                markup.row(InlineKeyboardButton(text=f'{social[1]}', callback_data=ShowSocialCallback(id=social[0]).pack()))
         markup.row(InlineKeyboardButton(text='⬅️ Вернуться назад', callback_data=start_page))
+        return markup.as_markup()
+
+    @staticmethod
+    def raffle_accept_button(raffle_id) -> InlineKeyboardMarkup:
+        markup = InlineKeyboardBuilder()
+        markup.row(InlineKeyboardButton(text='Участвую!', callback_data=RaffleAcceptCallback(id=raffle_id).pack()))
         return markup.as_markup()
 
     @staticmethod

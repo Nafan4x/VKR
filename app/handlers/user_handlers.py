@@ -15,6 +15,7 @@ from app.dao.resources import ResourcesDAO
 from app.dao.feedback import FeedbackDAO
 from app.dao.event import EventsDAO
 from app.dao.social import SocialDAO
+from app.dao.raffles import RaffleDAO, RaffleParticipantDAO
 from app.db.session import get_db
 from app.keyboards.callback_data import (
     start_page,
@@ -27,8 +28,8 @@ from app.keyboards.callback_data import (
     get_file_page,
     input_feedback,
     member_card_page,
-    input_name,
-    ShowSocialCallback
+    ShowSocialCallback,
+    RaffleAcceptCallback
 )
 
 router = Router()
@@ -45,7 +46,19 @@ async def start_command(message: Message, state: FSMContext):
             username=message.from_user.username,
             full_name=message.from_user.full_name
         )
+    text = message.text or ''
 
+    parts = text.split(maxsplit=1)
+    payload = parts[1] if len(parts) > 1 else None
+    if payload and payload.startswith('raffle_'):
+        raffle_id = int(payload.split('_')[1])
+        async for session in get_db():
+            raffle = await RaffleDAO.get_raffle_by_id(session=session, id=raffle_id)
+        if raffle:
+            await message.answer(
+                f'Привет! Розыгрыш: {raffle.title}\n\n Нажми кнопку, чтобы участвовать.',
+                reply_markup=Markup.raffle_accept_button(raffle_id)
+            )
     await message.answer(
         start_message_text,
         parse_mode='HTML',
@@ -92,9 +105,10 @@ async def event_menu(cb: types.CallbackQuery):
         message_text = await MessageDAO.get_text_message(session, event_page)
         events = await EventsDAO.get_sorted_events(session=session)
     events_text = ''
-    for event in events:
-        event_text = f'\n<b>{event[2]} - {event[0]}</b>\n<i>{event[1]}</i>\n'
-        events_text += event_text
+    if events:
+        for event in events:
+            event_text = f'\n<b>{event[2]} - {event[0]}</b>\n<i>{event[1]}</i>\n'
+            events_text += event_text
     message_text += '\n' + events_text
     await cb.message.edit_text(
         message_text,
@@ -252,6 +266,7 @@ async def input_name_msg(message: types.Message, state: FSMContext):
     await state.set_state(None)
 
     text_message = message.text
+    print(text_message)
     member_card = await exel_reader.get_number_by_name(text_message)
     if member_card:
         await message.answer(
@@ -268,3 +283,19 @@ async def input_name_msg(message: types.Message, state: FSMContext):
         parse_mode='HTML',
         reply_markup=Markup.open_menu()
     )
+
+
+@router.callback_query(RaffleAcceptCallback.filter())
+async def join_raffle_handler(cb: types.CallbackQuery, callback_data: RaffleAcceptCallback, state: FSMContext):
+    user_id = cb.from_user.id
+    raffle_id = callback_data.id
+
+    added = False
+    async for session in get_db():
+        added = await RaffleParticipantDAO.add_participant(session, raffle_id, user_id)
+    if added:
+        text = 'Вы успешно участвуете в розыгрыше!'
+    else:
+        text = 'Вы уже участвуете в этом розыгрыше.'
+
+    await cb.answer(text=text, show_alert=False)

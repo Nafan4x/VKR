@@ -25,9 +25,12 @@ async def edit_from_link(cb: types.CallbackQuery, state: FSMContext):
             session=session,
             type='exel',
         )
-    current_filename = exel_data.get('filename')
-    current_filename_create_date = exel_data.get('create_date')
-    message_text = f'Текущий файл:\n{current_filename} | {current_filename_create_date}\nЕсли нужно заменить, пришлите новый файл:'
+    if exel_data:
+        current_filename = exel_data.get('filename')
+        current_filename_create_date = exel_data.get('create_date')
+        message_text = f'Текущий файл:\n{current_filename} | {current_filename_create_date}\nЕсли нужно заменить, пришлите новый файл:'
+    else:
+        message_text = 'Пришлите новый файл:'
     await cb.message.edit_text(
         message_text,
         reply_markup=Markup.back_menu(),

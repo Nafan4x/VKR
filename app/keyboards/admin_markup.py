@@ -20,12 +20,16 @@ from app.keyboards.callback_data import (
     add_file,
     delete_social,
     add_social,
+    add_raffle,
     member_card_page,
+    pick_raffle_winner,
+    raffle_page,
     EditPageCallback,
     DeleteFileCallback,
     DeleteEventCallback,
     DeleteSocialCallback,
-    DeleteMessageCallback
+    DeleteMessageCallback,
+    PickWinnerCallback,
 )
 
 
@@ -37,6 +41,7 @@ class Markup:
             {'Изменить текст сообщений': edit_text_messages},
             {'Редактировать мероприятия': edit_events},
             {'Редактировать соц. программы': edit_social},
+            {'Розыгрыши': raffle_page},
             {'Добавить/Изменить exel файл': edit_form_link},
             {'Добавить/Изменить файлы для поступления': edit_files},
         ]
@@ -159,6 +164,22 @@ class Markup:
             InlineKeyboardButton(text='➖', callback_data=delete_social),
             InlineKeyboardButton(text='➕', callback_data=add_social),
         )
+        markup.row(InlineKeyboardButton(text='⬅️ Вернуться назад', callback_data=start_page))
+        return markup.as_markup()
+
+    @staticmethod
+    def raffle_menu(raffles) -> InlineKeyboardMarkup:
+        markup = InlineKeyboardBuilder()
+        markup.row(
+            InlineKeyboardButton(text='Создать розыгрыш', callback_data=add_raffle),
+        )
+        if raffles:
+            for raffle in raffles:
+                markup.row(
+                    InlineKeyboardButton(
+                        text=f'Выбрать победителя для розыгрыша {raffle[0]}',
+                        callback_data=PickWinnerCallback(id=raffle[0]).pack()),
+                )
         markup.row(InlineKeyboardButton(text='⬅️ Вернуться назад', callback_data=start_page))
         return markup.as_markup()
 

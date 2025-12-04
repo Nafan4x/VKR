@@ -46,3 +46,12 @@ class UserDAO:
         user_ids = result.scalars().all()
         return user_ids
     
+    @staticmethod
+    async def get_user_by_id(session: AsyncSession, tg_id: int) -> User | None:
+        """Возвращает объект User по Telegram ID"""
+        result = await session.execute(
+            select(User).where(User.tg_id == tg_id)
+        )
+        user = result.scalar_one_or_none()  # возвращает объект User или None
+        return user
+    

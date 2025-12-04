@@ -16,6 +16,11 @@ class AdminState(StatesGroup):
 
     input_feedback_answer = State()
 
+    add_raffle_title = State()
+    add_raffle_description = State()
+    add_raffles_start_date = State()
+    add_raffles_end_date = State()
+
 
 class UserState(StatesGroup):
     input_feedback = State()
