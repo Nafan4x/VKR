@@ -14,6 +14,7 @@ edit_event = 'edit_event'
 delete_event = 'delete_event'
 add_event = 'add_event'
 add_raffle = 'add_raffle'
+delete_raffle = 'delete_raffle'
 
 edit_social = 'edit_social'
 delete_social = 'delete_social'
@@ -37,6 +38,9 @@ class DeleteEventCallback(CallbackData, prefix='del-event'):
 
 
 class DeleteSocialCallback(CallbackData, prefix='del-social'):
+    id: int
+
+class DeleteRafflesCallback(CallbackData, prefix='del-raffles'):
     id: int
 
 class PickWinnerCallback(CallbackData, prefix='raf_win'):

@@ -17,6 +17,7 @@ from app.keyboards.callback_data import (
     delete_file,
     add_event,
     delete_event,
+    delete_raffle,
     add_file,
     delete_social,
     add_social,
@@ -30,6 +31,7 @@ from app.keyboards.callback_data import (
     DeleteSocialCallback,
     DeleteMessageCallback,
     PickWinnerCallback,
+    DeleteRafflesCallback
 )
 
 
@@ -171,7 +173,8 @@ class Markup:
     def raffle_menu(raffles) -> InlineKeyboardMarkup:
         markup = InlineKeyboardBuilder()
         markup.row(
-            InlineKeyboardButton(text='Создать розыгрыш', callback_data=add_raffle),
+            InlineKeyboardButton(text='➖', callback_data=delete_raffle),
+            InlineKeyboardButton(text='➕', callback_data=add_raffle),
         )
         if raffles:
             for raffle in raffles:
@@ -223,5 +226,26 @@ class Markup:
                 text="Не отвечать",
                 callback_data=DeleteMessageCallback(id=msg_id).pack()
             )
+        )
+        return markup.as_markup()
+    
+    @staticmethod
+    def delete_raffles_menu(raffles_ids: list) -> InlineKeyboardMarkup:
+        markup = InlineKeyboardBuilder()
+        row_buttons = []
+        if raffles_ids:
+            for i, file_id in enumerate(raffles_ids, start=1):
+                button = InlineKeyboardButton(
+                    text=f'{file_id}',
+                    callback_data=DeleteRafflesCallback(id=file_id).pack()
+                )
+                row_buttons.append(button)
+                if i % 5 == 0:
+                    markup.row(*row_buttons)
+                    row_buttons = []
+            if row_buttons:
+                markup.row(*row_buttons)
+        markup.row(
+            InlineKeyboardButton(text='⬅️ Вернуться назад', callback_data=raffle_page)
         )
         return markup.as_markup()

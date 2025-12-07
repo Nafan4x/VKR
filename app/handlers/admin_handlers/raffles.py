@@ -12,7 +12,9 @@ from app.keyboards.admin_markup import Markup
 from app.keyboards.callback_data import (
     add_raffle,
     raffle_page,
-    PickWinnerCallback
+    delete_raffle,
+    PickWinnerCallback,
+    DeleteRafflesCallback
 )
 
 admin_router = Router()
@@ -24,15 +26,56 @@ async def raffle_menu(cb: types.CallbackQuery, state: FSMContext):
     await state.set_state(None)
     async for session in get_db():
         raffles = await RaffleDAO.get_raffles(session=session)
-    raffles_text = ''
-    for raffle in raffles:
-        raffles_text += f'<code>{raffle[0]}</code>| {raffle[1]} | {raffle[2]} | {raffle[3]}\n'
+    raffles_text = 'Пока нет розыгрышей'
+    if raffles:
+        raffles_text = ''
+        for raffle in raffles:
+            raffles_text += f'<code>{raffle[0]}</code>| {raffle[1]} | {raffle[2]} | {raffle[3]}\n'
     message_text = 'Розыгрыши:\n' + raffles_text
     await cb.message.edit_text(
         message_text,
         reply_markup=Markup.raffle_menu(raffles),
         parse_mode='HTML',
     )
+
+@admin_router.callback_query(admin_filter, F.data == delete_raffle)
+async def raffle_delete_menu(cb: types.CallbackQuery, state: FSMContext):
+    await state.set_state(None)
+    async for session in get_db():
+        raffles = await RaffleDAO.get_raffles(session=session)
+    raffles_text = 'Пока нет розыгрышей'
+    raffles_ids = []
+    if raffles:
+        raffles_text = ''
+        for raffle in raffles:
+            raffles_text += f'<code>{raffle[0]}</code>| {raffle[1]} | {raffle[2]} | {raffle[3]}\n'
+        raffles_ids = [r[0] for r in raffles]
+    message_text = 'Розыгрыши:\n' + raffles_text
+    await cb.message.edit_text(
+        message_text,
+        reply_markup=Markup.delete_raffles_menu(raffles_ids),
+        parse_mode='HTML',
+    )
+
+@admin_router.callback_query(admin_filter, DeleteRafflesCallback.filter())
+async def deleting_file(cb: types.CallbackQuery, callback_data: DeleteRafflesCallback):
+    id = callback_data.id
+    success = False
+    async for session in get_db():
+        success = await RaffleDAO.delete_by_id(session=session, raffle_id=id)
+    if success:
+        await cb.message.edit_text(
+            '<b>✅ Розыгрыш успешно удален!</b>',
+            parse_mode='HTML',
+            reply_markup=Markup.back_special_menu(raffle_page)
+        )
+    else:
+        await cb.message.edit_text(
+            '❌ Ошибка при удалении розыгрыша',
+            show_alert=True,
+            reply_markup=Markup.back_special_menu(raffle_page)
+        )
+
 
 
 @admin_router.callback_query(admin_filter, PickWinnerCallback.filter())
@@ -41,7 +84,10 @@ async def raffle_winner_page(cb: types.CallbackQuery, callback_data: PickWinnerC
     async for session in get_db():
         winner_id = await RaffleParticipantDAO.pick_winner(session=session, raffle_id=raffle_id)
         user_data = await UserDAO.get_user_by_id(session=session, tg_id=winner_id)
-    winner_text = f'tg_id: <code>{user_data.tg_id}</code>\nusername: <code>{user_data.username}</code>\nfull_name: <code>{user_data.full_name}</code>'
+    if user_data:
+        winner_text = f'tg_id: <code>{user_data.tg_id}</code>\nusername: <code>{user_data.username}</code>\nfull_name: <code>{user_data.full_name}</code>'
+    else:
+        winner_text = 'Никто еще не участвует в розыгрыше'
     message_text = 'Победитеть:\n' + winner_text
     await cb.message.edit_text(
         message_text,

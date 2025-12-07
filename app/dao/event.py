@@ -106,7 +106,7 @@ class EventsDAO:
 
         try:
             # Парсим дату
-            date = parser.parse(date_str)
+            date = parser.parse(date_str, dayfirst=True)
 
             # Пример проверки: дата не в прошлом (можно убрать, если не нужно)
             if date < datetime.now():
