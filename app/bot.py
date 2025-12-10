@@ -9,6 +9,8 @@ async def main():
     bot = Bot(token=config.BOT_TOKEN)
     dp = Dispatcher()
 
+
+
     dp.include_router(router)
 
     logger.info('Bot starting...')
