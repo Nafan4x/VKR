@@ -3,6 +3,13 @@ version: '3.8'
 services:
   bot:
     build: .
+    container_name: telegram_bot
     restart: unless-stopped
     volumes:
-      - ./data:/app/data  # Для сохранения SQLite при обновлениях
+      # Только файл БД
+      - ./data/database.db:/app/data/database.db:rw
+      
+      # Для логов отдельно
+      - ./logs:/app/logs:rw
+    env_file:
+      - .env

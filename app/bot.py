@@ -15,6 +15,9 @@ def get_user_info(user: types.User) -> str:
     return f"{user.id} | {user.full_name} | @{user.username if user.username else 'Отсутствует'}"
 
 
+logger.add("bot.log", rotation="10 MB", retention="30 days", level="INFO")
+
+
 class LogActionMiddleware(BaseMiddleware):
     async def __call__(
         self,
