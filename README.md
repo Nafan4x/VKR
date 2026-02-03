@@ -8,7 +8,9 @@
 - Телеграм бот токен
 
 ## Запуск проекта
+0. Создайте и заполните файл .env в корне проекта (пример .env.example)
 
+### Если запускаете без докера:
 1. Клонируйте репозиторий
 ```bash
 git clone <your-repo-url>
@@ -27,18 +29,15 @@ source venv/bin/activate
 ```bash
 pip install -r requirements.txt
 ```
-3. Создайте и заполните файл .env в корне проекта (пример .env.example)
-
 4. Проведите миграции через alembic
 ```bash
-alembic revision --autogenerate -m 'initial'
 alembic upgrade head
 ```
-
-5. Запустите контейнеры
+5. Запустите бота
 ```bash
-docker copmose up -d
+python -m app.main
 ```
+
 
 **Поддерживаемые теги:**
 
