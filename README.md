@@ -35,6 +35,11 @@ alembic revision --autogenerate -m 'initial'
 alembic upgrade head
 ```
 
+5. Запустите контейнеры
+```bash
+docker copmose up -d
+```
+
 **Поддерживаемые теги:**
 
 * `<b>...</b>` — **жирный текст**
