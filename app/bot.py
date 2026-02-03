@@ -33,6 +33,8 @@ class LogActionMiddleware(BaseMiddleware):
 async def main():
     bot = Bot(token=config.BOT_TOKEN)
     dp = Dispatcher()
+    dp.message.outer_middleware(LogActionMiddleware())
+    dp.callback_query.outer_middleware(LogActionMiddleware())
     # setup_middlewares(dispatcher)
 
     dp.include_router(router)

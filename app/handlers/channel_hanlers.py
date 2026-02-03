@@ -11,11 +11,11 @@ async def channel_post_handler(message: types.Message):
     user_ids= []
     async for session in get_db():
         user_ids = await UserDAO.get_all_users_ids(session=session)
-    
+
     text_message = f"🆕 Новый пост в канале"
-    
+
     await broadcast_message_to_users(
         bot=message.bot,
         user_ids=user_ids,
         text=text_message
-    )   
+    )
