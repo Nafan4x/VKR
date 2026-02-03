@@ -10,7 +10,7 @@ load_dotenv()
 @dataclass
 class Config:
     BOT_TOKEN: str = os.getenv('BOT_TOKEN')
-    DB_URL: str = os.getenv('DB_URL', 'sqlite+aiosqlite:///data/database.db')
+    DB_URL: str = os.getenv('DB_URL', 'sqlite+aiosqlite:///database.db')
     LOG_LEVEL: str = os.getenv('LOG_LEVEL', 'INFO')
     ADMIN_IDS: List[int] = None
     RESOURCE_PATH: str = None
