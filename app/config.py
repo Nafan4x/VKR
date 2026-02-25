@@ -13,6 +13,7 @@ class Config:
     BOT_USERNAME: str = os.getenv('BOT_USERNAME')
     DB_URL: str = os.getenv('DB_URL', 'sqlite+aiosqlite:///database.db')
     LOG_LEVEL: str = os.getenv('LOG_LEVEL', 'INFO')
+    PROXY: str = os.getenv('PROXY')
     ADMIN_IDS: List[int] = None
     RESOURCE_PATH: str = None
 

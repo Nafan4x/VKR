@@ -7,6 +7,9 @@ from app.handlers import router
 
 import typing
 from aiogram import BaseMiddleware, types
+from aiogram.client.session.aiohttp import AiohttpSession
+from aiogram.exceptions import TelegramNetworkError
+from aiohttp_socks import ProxyConnector
 from app.dao.user import UserDAO
 from app.db.session import get_db
 
@@ -57,7 +60,10 @@ class BanMiddleware(BaseMiddleware):
 
 
 async def main():
-    bot = Bot(token=config.BOT_TOKEN)
+    PROXY_URL = config.PROXY
+   #  connector = ProxyConnector.from_url(PROXY_URL)
+    session = AiohttpSession(proxy=PROXY_URL)
+    bot = Bot(token=config.BOT_TOKEN, session=session)
     dp = Dispatcher()
     dp.message.outer_middleware(BanMiddleware())  # Сначала проверка бана
     dp.callback_query.outer_middleware(BanMiddleware())
