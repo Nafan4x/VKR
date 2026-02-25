@@ -1,11 +1,17 @@
 from aiogram.filters.callback_data import CallbackData
 
 # Admin callbacks
+# outer callbacks
+open_edit_items = 'open_edit_items'
+raffle_page = 'raffle_page'
+open_users = 'open_users'
+
+
+# inner callbacks
 edit_text_messages = 'edit_text_messages_page'
 edit_events = 'edit_events'
 edit_social = 'edit_social'
 edit_form_link = 'edit_form_link'
-raffle_page = 'raffle_page'
 edit_files = 'edit_files'
 delete_file = 'delete_file'
 add_file = 'add_file'

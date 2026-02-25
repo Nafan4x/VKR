@@ -10,6 +10,8 @@ from app.dao.user import UserDAO
 from app.keyboards.admin_markup import Markup
 from app.keyboards.callback_data import (
     start_page,
+    open_edit_items,
+    open_users
 )
 
 
@@ -52,4 +54,14 @@ async def start_menu(cb: types.CallbackQuery, state: FSMContext):
         '<b>Добро пожаловать в админ панель</b>',
         parse_mode='HTML',
         reply_markup=Markup.open_menu()
+    )
+
+
+@admin_router.callback_query(admin_filter, F.data == open_edit_items)
+async def start_edit_menu(cb: types.CallbackQuery, state: FSMContext):
+    await state.set_state(None)
+    await cb.message.edit_text(
+        '<b>Меню для редактирования информации. Выберите блок который хотите редактировать</b>',
+        parse_mode='HTML',
+        reply_markup=Markup.open_edit_items_menu()
     )
