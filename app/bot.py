@@ -7,6 +7,8 @@ from app.handlers import router
 
 import typing
 from aiogram import BaseMiddleware, types
+from app.dao.user import UserDAO
+from app.db.session import get_db
 
 from loguru import logger
 
@@ -33,10 +35,33 @@ class LogActionMiddleware(BaseMiddleware):
         return await handler(event, data)
 
 
+class BanMiddleware(BaseMiddleware):
+    async def __call__(self, handler, event, data):
+        user_id = None
+        if isinstance(event, types.Message):
+            user_id = event.from_user.id
+        elif isinstance(event, types.CallbackQuery):
+            user_id = event.from_user.id
+
+        async for session in get_db():
+            is_banned = await UserDAO.is_banned(session=session, tg_id=user_id)
+        if is_banned:
+            # Забаненный пользователь - игнорируем
+            if isinstance(event, types.Message):
+                await event.answer("⛔ Вы забанены")
+            elif isinstance(event, types.CallbackQuery):
+                await event.answer("⛔ Вы забанены")
+            return  # Не передаем дальше
+
+        return await handler(event, data)
+
+
 async def main():
     bot = Bot(token=config.BOT_TOKEN)
     dp = Dispatcher()
-    dp.message.outer_middleware(LogActionMiddleware())
+    dp.message.outer_middleware(BanMiddleware())  # Сначала проверка бана
+    dp.callback_query.outer_middleware(BanMiddleware())
+    dp.message.outer_middleware(LogActionMiddleware())  # Потом логирование
     dp.callback_query.outer_middleware(LogActionMiddleware())
     # setup_middlewares(dispatcher)
 
