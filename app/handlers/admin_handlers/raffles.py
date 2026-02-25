@@ -159,7 +159,7 @@ async def add_raffle_end_date_page(message: types.Message, state: FSMContext):
     raffle_title = state_data['raffle_title']
 
     date_start_succes_msg = await message.answer(
-        f'✅ Отлично, теперь отправьте дату и время начала розыгрыша {raffle_title} в формате "ч.м.г время"',
+        f'✅ Отлично, теперь отправьте дату и время конца розыгрыша {raffle_title} в формате "ч.м.г время"',
         parse_mode='HTML',
         reply_markup=Markup.back_special_menu(raffle_page),
     )

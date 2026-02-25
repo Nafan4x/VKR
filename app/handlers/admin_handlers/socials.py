@@ -30,7 +30,7 @@ async def edit_files_page(cb: types.CallbackQuery, state: FSMContext):
             message_text += f'{i[0]}: {i[1]}\n'
     else:
         message_text += 'Пусто\n'
-    message_text += '\n Для добавления или удаление файлов используйте кнопки ниже'
+    message_text += '\n Для добавления или удаление соц.программ используйте кнопки ниже'
     await cb.message.edit_text(
         message_text,
         reply_markup=Markup.edit_social_menu(),
@@ -46,7 +46,7 @@ async def delete_files_page(cb: types.CallbackQuery):
     if files:
         for i in files:
             message_text += f'{i[0]}: {i[1]}\n'
-        message_text += '\nВыберите id файла, который необходимо удалить с помощью кнопок⬇️'
+        message_text += '\nВыберите id соц.программы, который необходимо удалить с помощью кнопок⬇️'
         await cb.message.edit_text(
             message_text,
             reply_markup=Markup.delete_social_menu([file[0] for file in files]),
