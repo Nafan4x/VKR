@@ -44,7 +44,7 @@ class Markup:
     def open_menu() -> InlineKeyboardMarkup:
         markup = InlineKeyboardBuilder()
         buttons_panel = [
-            {'Изменить текст сообщений': open_edit_items, 'Розыгрыши': raffle_page},
+            {'Изменить информацию или данные': open_edit_items, 'Розыгрыши': raffle_page},
             {'Пользователи бота': open_users},
         ]
         for buttons in buttons_panel:
