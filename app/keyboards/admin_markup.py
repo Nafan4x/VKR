@@ -9,6 +9,8 @@ from app.keyboards.callback_data import (
     event_page,
     social_page,
     start_page,
+    get_users_list,
+    ban_user_panel,
     edit_text_messages,
     open_edit_items,
     open_users,
@@ -52,6 +54,7 @@ class Markup:
 
         return markup.as_markup()
 
+    @staticmethod
     def open_edit_items_menu() -> InlineKeyboardMarkup:
         markup = InlineKeyboardBuilder()
         buttons_panel = [
@@ -60,6 +63,19 @@ class Markup:
             {'Редактировать соц. программы': edit_social},
             {'Добавить/Изменить exel файл': edit_form_link},
             {'Добавить/Изменить файлы для поступления': edit_files},
+        ]
+        for buttons in buttons_panel:
+            markup.row(
+                *[InlineKeyboardButton(text=key, callback_data=value) for key, value in buttons.items()]
+            )
+        markup.row(InlineKeyboardButton(text='⬅️ Вернуться назад', callback_data=start_page))
+        return markup.as_markup()
+
+    @staticmethod
+    def open_users_menu() -> InlineKeyboardMarkup:
+        markup = InlineKeyboardBuilder()
+        buttons_panel = [
+            {'Получить список пользователей': get_users_list, 'Заблокировать пользователя': ban_user_panel},
         ]
         for buttons in buttons_panel:
             markup.row(

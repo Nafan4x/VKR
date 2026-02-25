@@ -26,6 +26,9 @@ edit_social = 'edit_social'
 delete_social = 'delete_social'
 add_social = 'add_social'
 
+get_users_list = 'get_users_list'
+ban_user_panel = 'ban_user_panel'
+
 pick_raffle_winner = 'pick_raffle_winner'
 
 
