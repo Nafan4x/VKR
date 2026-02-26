@@ -10,7 +10,7 @@ from app.db.base import Base
 class Raffle(Base):
     __tablename__ = 'raffle'
 
-    id = Column(Integer, primary_key=True)
+    id = Column(Integer, primary_key=True, autoincrement=True)
     title = Column(String, nullable=False)  # Название розыгрыша
     description = Column(String, nullable=True)  # Описание
     start_time = Column(DateTime(timezone=False), nullable=False, default=datetime.utcnow)

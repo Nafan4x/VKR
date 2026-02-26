@@ -4,6 +4,7 @@ from aiogram.fsm.context import FSMContext
 
 from app.handlers.admin_handlers.filter import admin_filter
 from app.keyboards.state import AdminState
+from app.config import config
 from app.db.session import get_db
 from app.dao.event import EventsDAO
 from app.dao.user import UserDAO
@@ -30,13 +31,22 @@ async def raffle_menu(cb: types.CallbackQuery, state: FSMContext):
     if raffles:
         raffles_text = ''
         for raffle in raffles:
-            raffles_text += f'<code>{raffle[0]}</code>| {raffle[1]} | {raffle[2]} | {raffle[3]}\n'
+            link = f"https://t.me/{config.BOT_USERNAME.replace('@', '')}?start=raffle_{raffle[0]}"
+
+            # Создаем рамку фиксированной ширины
+            raffles_text += ""
+            raffles_text += "┌────────────────────────────────────────┐\n"  # 40 символов ширина
+            raffles_text += f"🆔 {raffle[0]} {raffle[1]} {raffle[2]} {raffle[3]}\n"
+            raffles_text += f"🔗 {link}\n"
+            raffles_text += "└────────────────────────────────────────┘\n"
+            raffles_text += ""
     message_text = 'Розыгрыши:\n' + raffles_text
     await cb.message.edit_text(
         message_text,
         reply_markup=Markup.raffle_menu(raffles),
         parse_mode='HTML',
     )
+
 
 @admin_router.callback_query(admin_filter, F.data == delete_raffle)
 async def raffle_delete_menu(cb: types.CallbackQuery, state: FSMContext):
@@ -57,6 +67,7 @@ async def raffle_delete_menu(cb: types.CallbackQuery, state: FSMContext):
         parse_mode='HTML',
     )
 
+
 @admin_router.callback_query(admin_filter, DeleteRafflesCallback.filter())
 async def deleting_file(cb: types.CallbackQuery, callback_data: DeleteRafflesCallback):
     id = callback_data.id
@@ -75,7 +86,6 @@ async def deleting_file(cb: types.CallbackQuery, callback_data: DeleteRafflesCal
             show_alert=True,
             reply_markup=Markup.back_special_menu(raffle_page)
         )
-
 
 
 @admin_router.callback_query(admin_filter, PickWinnerCallback.filter())

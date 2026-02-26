@@ -8,6 +8,7 @@ from .socials import admin_router as social_router
 from .events import admin_router as event_router
 from .feedback import admin_router as feedback_router
 from .raffles import admin_router as raffles_router
+from .users import admin_router as users_filter
 from .filter import admin_filter
 
 admin_router = Router()
@@ -21,3 +22,4 @@ admin_router.include_router(social_router)
 admin_router.include_router(event_router)
 admin_router.include_router(feedback_router)
 admin_router.include_router(raffles_router)
+admin_router.include_router(users_filter)

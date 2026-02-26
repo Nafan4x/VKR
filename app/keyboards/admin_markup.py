@@ -9,7 +9,11 @@ from app.keyboards.callback_data import (
     event_page,
     social_page,
     start_page,
+    get_users_list,
+    ban_user_panel,
     edit_text_messages,
+    open_edit_items,
+    open_users,
     edit_events,
     edit_social,
     edit_form_link,
@@ -40,10 +44,23 @@ class Markup:
     def open_menu() -> InlineKeyboardMarkup:
         markup = InlineKeyboardBuilder()
         buttons_panel = [
+            {'Изменить информацию или данные': open_edit_items, 'Розыгрыши': raffle_page},
+            {'Пользователи бота': open_users},
+        ]
+        for buttons in buttons_panel:
+            markup.row(
+                *[InlineKeyboardButton(text=key, callback_data=value) for key, value in buttons.items()]
+            )
+
+        return markup.as_markup()
+
+    @staticmethod
+    def open_edit_items_menu() -> InlineKeyboardMarkup:
+        markup = InlineKeyboardBuilder()
+        buttons_panel = [
             {'Изменить текст сообщений': edit_text_messages},
             {'Редактировать мероприятия': edit_events},
             {'Редактировать соц. программы': edit_social},
-            {'Розыгрыши': raffle_page},
             {'Добавить/Изменить exel файл': edit_form_link},
             {'Добавить/Изменить файлы для поступления': edit_files},
         ]
@@ -51,7 +68,20 @@ class Markup:
             markup.row(
                 *[InlineKeyboardButton(text=key, callback_data=value) for key, value in buttons.items()]
             )
+        markup.row(InlineKeyboardButton(text='⬅️ Вернуться назад', callback_data=start_page))
+        return markup.as_markup()
 
+    @staticmethod
+    def open_users_menu() -> InlineKeyboardMarkup:
+        markup = InlineKeyboardBuilder()
+        buttons_panel = [
+            {'Получить список пользователей': get_users_list, 'Заблокировать пользователя': ban_user_panel},
+        ]
+        for buttons in buttons_panel:
+            markup.row(
+                *[InlineKeyboardButton(text=key, callback_data=value) for key, value in buttons.items()]
+            )
+        markup.row(InlineKeyboardButton(text='⬅️ Вернуться назад', callback_data=start_page))
         return markup.as_markup()
 
     @staticmethod

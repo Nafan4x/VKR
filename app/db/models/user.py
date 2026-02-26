@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, BigInteger, String
+from sqlalchemy import Column, Integer, BigInteger, String, Boolean
 
 from app.db.base import Base
 
@@ -10,3 +10,4 @@ class User(Base):
     tg_id = Column(BigInteger, unique=True, nullable=False)
     username = Column(String, nullable=True)
     full_name = Column(String, nullable=True)
+    is_banned = Column(Boolean, default=False)

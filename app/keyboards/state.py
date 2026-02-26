@@ -21,6 +21,8 @@ class AdminState(StatesGroup):
     add_raffles_start_date = State()
     add_raffles_end_date = State()
 
+    delete_user = State()
+
 
 class UserState(StatesGroup):
     input_feedback = State()
